@@ -1,6 +1,8 @@
 import numpy as np
 from math import pi
 import random as rand
+import matplotlib.pyplot as plt
+from matplotlib.patches import Polygon
 
 SPECIES_SIZES = {
         'w': {
@@ -19,6 +21,22 @@ SPECIES_SIZES = {
             'c':    2.5
             }
         }
+
+PLOT_COLORS = {
+        'wm': 'xkcd:red',
+        'wf': 'xkcd:magenta',
+        'wc': 'xkcd:lavendar',
+        'hm': 'xkcd:green',
+        'hf': 'xkcd:light green',
+        'hc': 'xkcd:mint',
+        'om': 'xkcd:navy blue',
+        'of': 'xkcd:blue',
+        'oc': 'xkcd:light blue'
+        }
+
+
+
+
 SPECIES_LEAD_EFFECT = {
         'w': 0.0,
         'h': 1.0,
@@ -36,7 +54,7 @@ class Creature(object):
         self.lead = lead or rand.random()*LEAD_MAX
 
         d1, d2, d3, d4 = (self._make_x() for n in range(4))
-        self.corners = tuple(np.array(x) 
+        self.corners = np.vstack(np.array(x) 
                 for x in ((0,d1), (-1*d2,0), (0,-1*d3), (d4, 0))
                 )
 
@@ -55,11 +73,20 @@ class Creature(object):
         if not angle: angle=2*pi*rand.random()
         c, s = np.cos(angle), np.sin(angle)
         rot_mat = np.array([[c, -s], [s, c]])
-        self.corners = tuple(np.dot(rot_mat, x) for x in self.corners)
+        self.corners = np.array([np.dot(x, rot_mat) for x in self.corners])
 
     def translate(self, shift=None):
         if not shift: shift = TRANSLATE_SIZE * np.array(
                 [rand.random(), rand.random()])
-        self.corners = tuple(x + shift for x in self.corners)
+        self.corners = self.corners + shift
         
+    def plot(self):
+        fix,ax = plt.subplots()
+        pol = Polygon(self.corners)
+        ax.add_patch(pol)
+        ax.set_xlim(-5,5)
+        ax.set_ylim(-5,5)
+        plt.show()
+
+
 
