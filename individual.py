@@ -39,12 +39,12 @@ PLOT_COLORS = {
 
 SPECIES_LEAD_EFFECT = {
         'w': 0.0,
-        'h': 1.0,
-        'o': 0.5
+        'h': 2.0,
+        'o': 1.0
         }
 TRANSLATE_SIZE = 3.0
 LEAD_MAX = 0.4
-SIZE_RANDOMIZER = 1.0
+SIZE_RANDOMIZER = 0.2
 
 
 class Creature(object):
@@ -68,7 +68,11 @@ class Creature(object):
     def _make_x(self):
         size = SPECIES_SIZES[self.species][self.mfc]
         srand = SIZE_RANDOMIZER
-        x = size + rand.uniform(-1*srand, srand) - self.lead
+        x = (
+                size + 
+                rand.uniform(-1*srand, srand) - 
+                (self.lead * SPECIES_LEAD_EFFECT[self.species])
+                )
         return x
 
     def rotate(self, angle=None):
@@ -89,6 +93,14 @@ class Creature(object):
                 alpha=0.4
                 )
         self.polygon = pol
+
+    def find_diagonals(self):
+        c = self.corners
+        diags = tuple(
+                np.linalg.norm(p2-p1) 
+                for (p1,p2) in ((c[2], c[0]), (c[3], c[1]))
+                )
+        return diags
 
 
 
