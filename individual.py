@@ -23,15 +23,15 @@ SPECIES_SIZES = {
         }
 
 PLOT_COLORS = {
-        'wm': 'xkcd:red',
-        'wf': 'xkcd:magenta',
-        'wc': 'xkcd:lavendar',
-        'hm': 'xkcd:green',
-        'hf': 'xkcd:light green',
-        'hc': 'xkcd:mint',
-        'om': 'xkcd:navy blue',
-        'of': 'xkcd:blue',
-        'oc': 'xkcd:light blue'
+        ('w', 'm'): 'xkcd:red',
+        ('w', 'f'): 'xkcd:magenta',
+        ('w', 'c'): 'xkcd:lavender',
+        ('h', 'm'): 'xkcd:green',
+        ('h', 'f'): 'xkcd:light green',
+        ('h', 'c'): 'xkcd:mint',
+        ('o', 'm'): 'xkcd:navy blue',
+        ('o', 'f'): 'xkcd:blue',
+        ('o', 'c'): 'xkcd:light blue'
         }
 
 
@@ -42,7 +42,7 @@ SPECIES_LEAD_EFFECT = {
         'h': 1.0,
         'o': 0.5
         }
-TRANSLATE_SIZE = 1.0
+TRANSLATE_SIZE = 3.0
 LEAD_MAX = 0.4
 SIZE_RANDOMIZER = 1.0
 
@@ -52,6 +52,7 @@ class Creature(object):
         self.species = species or rand.sample(['w', 'h', 'o'], 1)[0]
         self.mfc = mfc or rand.sample(['m', 'f', 'c'], 1)[0]
         self.lead = lead or rand.random()*LEAD_MAX
+        self.plot_color = PLOT_COLORS[(self.species, self.mfc)]
 
         d1, d2, d3, d4 = (self._make_x() for n in range(4))
         self.corners = np.vstack(np.array(x) 
@@ -60,6 +61,7 @@ class Creature(object):
 
         self.rotate()
         self.translate()
+        self.make_polygon()
         return
         
 
@@ -77,16 +79,16 @@ class Creature(object):
 
     def translate(self, shift=None):
         if not shift: shift = TRANSLATE_SIZE * np.array(
-                [rand.random(), rand.random()])
+                [rand.uniform(-1,1), rand.uniform(-1,1)])
         self.corners = self.corners + shift
         
-    def plot(self):
-        fix,ax = plt.subplots()
-        pol = Polygon(self.corners)
-        ax.add_patch(pol)
-        ax.set_xlim(-5,5)
-        ax.set_ylim(-5,5)
-        plt.show()
+    def make_polygon(self):
+        pol = Polygon(
+                self.corners, 
+                color=self.plot_color,
+                alpha=0.4
+                )
+        self.polygon = pol
 
 
 

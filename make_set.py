@@ -2,6 +2,7 @@ import individual
 import pickle
 import sys
 import random as rand
+import matplotlib.pyplot as plt
 
 WHO_ODDS = (1,1,1)
 MFC_ODDS = (1,1,1)
@@ -20,6 +21,7 @@ def make_creature_list(n):
             for i in range(n)
             ]
     return out
+
 
 
 if __name__ == '__main__':
