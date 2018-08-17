@@ -43,7 +43,7 @@ SPECIES_LEAD_EFFECT = {
         'o': 1.0
         }
 TRANSLATE_SIZE = 3.0
-LEAD_MAX = 0.4
+LEAD_MAX = 0.6
 SIZE_RANDOMIZER = 0.2
 
 
@@ -55,13 +55,13 @@ class Creature(object):
         self.plot_color = PLOT_COLORS[(self.species, self.mfc)]
 
         d1, d2, d3, d4 = (self._make_x() for n in range(4))
-        self.corners = np.vstack(np.array(x) 
+        self.corners = np.vstack(
+                np.array(x) 
                 for x in ((0,d1), (-1*d2,0), (0,-1*d3), (d4, 0))
                 )
 
         self.rotate()
         self.translate()
-        self.make_polygon()
         return
         
 
@@ -76,13 +76,13 @@ class Creature(object):
         return x
 
     def rotate(self, angle=None):
-        if not angle: angle=2*pi*rand.random()
+        if angle is None: angle=2*pi*rand.random()
         c, s = np.cos(angle), np.sin(angle)
         rot_mat = np.array([[c, -s], [s, c]])
         self.corners = np.array([np.dot(x, rot_mat) for x in self.corners])
 
     def translate(self, shift=None):
-        if not shift: shift = TRANSLATE_SIZE * np.array(
+        if shift is None: shift = TRANSLATE_SIZE * np.array(
                 [rand.uniform(-1,1), rand.uniform(-1,1)])
         self.corners = self.corners + shift
         
@@ -92,7 +92,7 @@ class Creature(object):
                 color=self.plot_color,
                 alpha=0.4
                 )
-        self.polygon = pol
+        return pol
 
     def find_diagonals(self):
         c = self.corners
@@ -101,6 +101,14 @@ class Creature(object):
                 for (p1,p2) in ((c[2], c[0]), (c[3], c[1]))
                 )
         return diags
+
+    def standardize(self):
+        cent = np.mean(self.corners, axis=0)
+        self.translate(shift=-1*cent)
+        x1 = self.corners[0]
+        abs_theta=np.arccos(x1[1]/np.linalg.norm(x1))
+        theta = abs_theta if x1[0]>0 else -1*abs_theta
+        self.rotate(-1*theta)
 
 
 
