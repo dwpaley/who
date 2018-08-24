@@ -5,7 +5,7 @@ from sklearn.utils import Bunch
 from sklearn import preprocessing
 
 
-def make_bunch(creatures)
+def make_bunch(creatures):
     #process the species to one-hot-encode and add to feature vectors
     species = np.array([c.species for c in creatures])
     le = preprocessing.LabelEncoder()
@@ -46,7 +46,7 @@ def main():
     with open(sys.argv[2], 'wb') as f:
         pickle.dump(out, f)
 
-if __name__ == __main__:
+if __name__ == '__main__':
     main()
 
 
